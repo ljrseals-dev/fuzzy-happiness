@@ -8,8 +8,12 @@ Pipeline: **MAE pretrain on unlabeled depth → ViT teacher → distilled separa
 Target platform: Ubuntu 22.04, CUDA 12.x, TensorRT ≥ 8.6, RTX 3060 or Jetson Orin NX.  
 License: MIT.
 
-> Status: the numpy side (synthetic data, preprocessing, HHA, skeleton decoding, One-Euro smoothing) is covered by `tests/test_core.py`. The PyTorch, ONNX, TensorRT, sensor and C++ parts were written and reviewed but could not be executed where this was prepared (no GPU, torch, TensorRT or OpenCV dev headers). Run `./smoke_test.sh` first and expect small fixes. Synthetic stick-figure data lets every stage run without a Kinect; for production accuracy replace the renderer with SMPL/AMASS + a mesh depth renderer and fine-tune on a few hundred real labeled frames.
-
+> **Status**
+>
+> - **Python training / export**: runnable today; validated on CPU smoke tests (`./smoke_test.sh`, `tests/test_core.py`).
+> - **C++ path**: runnable in `HUSH_MOCK_TRT` mode on CPU (parity-verified against Python `decode_skeleton`). Live TensorRT path requires GPU validation — see `docs/GPU_VALIDATION.md`.
+> - **INT8**: experimental. Requires ≥500 real Kinect depth frames for calibration. Not production-ready until then.
+> - **Synthetic data**: stick-figure is the development fallback. SMPL renderer (`--renderer smpl --require-smpl`) needs external model downloads (smplx + PyBullet + SMPL_MODEL_PATH).
 ## Layout
 
 ```
@@ -50,7 +54,7 @@ python finetune_pose.py --mode baseline --n-train 128 --epochs 1 --bs 8 --smoke 
 
 # 3. Synthetic data
 python generate_synthetic_data.py --out /tmp/synth --n 32
-python visualize_skeleton.py --depth /tmp/synth/000000_depth.npy --xyz /tmp/synth/000000_xyz.npy --out /tmp/vis.png
+python visualize_skeleton.py --depth /tmp/synth/000000_depth.npy --xyz /tmp/synth/000000_xyz.npy --meta /tmp/synth/meta.json --out /tmp/vis.png
 ```
 
 ## Full training order (GPU recommended)

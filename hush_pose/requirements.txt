@@ -9,3 +9,8 @@ onnxruntime>=1.16
 # pycuda
 # pylibfreenect2           # Kinect v2; build libfreenect2 with CUDA first
 # pyk4a                    # Azure Kinect Sensor SDK required
+
+# Optional (SMPL renderer — only needed for --renderer smpl):
+# smplx
+# pybullet
+# trimesh

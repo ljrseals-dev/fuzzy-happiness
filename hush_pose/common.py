@@ -55,3 +55,29 @@ def make_heatmaps(j256, sigma: float = 2.0) -> np.ndarray:
         if -0.5 <= x < HM - 0.5 and -0.5 <= y < HM - 0.5:
             hm[k] = np.exp(-((xs - x) ** 2 + (ys - y) ** 2) / (2 * sigma ** 2))
     return hm
+
+# Map SMPL 24-joint order -> our 17-joint order.
+# Indices into SMPL joints (see SMPL paper / smplx docs). -1 = no correspondence (synthesized).
+# Our order: head_top, head, neck, spine, pelvis,
+#   r_shoulder, r_elbow, r_wrist, l_shoulder, l_elbow, l_wrist,
+#   r_hip, r_knee, r_ankle, l_hip, l_knee, l_ankle
+SMPL24_TO_17 = [
+    15,  # head_top  <- SMPL head
+    15,  # head
+    12,  # neck
+    9,   # spine (spine2)
+    0,   # pelvis
+    17,  # r_shoulder
+    19,  # r_elbow
+    21,  # r_wrist
+    16,  # l_shoulder
+    18,  # l_elbow
+    20,  # l_wrist
+    2,   # r_hip
+    5,   # r_knee
+    8,   # r_ankle
+    1,   # l_hip
+    4,   # l_knee
+    7,   # l_ankle
+]
+

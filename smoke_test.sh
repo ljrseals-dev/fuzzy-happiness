@@ -16,7 +16,7 @@ echo "=== 3. Synthetic data generation ==="
 python generate_synthetic_data.py --out /tmp/hush_synth --n 8
 
 echo "=== 4. Visualization ==="
-python visualize_skeleton.py --depth /tmp/hush_synth/000000_depth.npy --xyz /tmp/hush_synth/000000_xyz.npy --out /tmp/hush_vis.png
+python visualize_skeleton.py --depth /tmp/hush_synth/000000_depth.npy --xyz /tmp/hush_synth/000000_xyz.npy --meta /tmp/hush_synth/meta.json --out /tmp/hush_vis.png
 
 echo "=== 5. ONNX export (optional – needs onnx) ==="
 if python -c "import onnx" 2>/dev/null; then
