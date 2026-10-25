@@ -1,3 +1,8 @@
+Copyright © 2026 Lewis James Seals Jr. All rights reserved.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT.
 Status: v1.0 (CPU-validated release). Python training/export, ONNX parity, and C++ mock-TRT parity are verified on CPU. GPU TensorRT and Kinect capture paths are implemented and scripted but not yet executed on hardware — see docs/HARDWARE_HANDOFF.md. Performance tables are intentionally blank until the GPU validation gates in docs/GPU_VALIDATION.md are run.
 
 # Hush Kinect Pose
