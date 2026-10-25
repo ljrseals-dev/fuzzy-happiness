@@ -2,7 +2,7 @@
 import json
 import numpy as np
 from scipy.ndimage import maximum_filter
-from common import JOINT_NAMES, PARENT, IMG, HM, from_crop
+from common import JOINT_NAMES, PARENT, IMG, HM, NEAR, FAR, from_crop
 
 MAX_BONE_M = 0.8      # reject joints implausibly far from their parent
 
@@ -45,7 +45,7 @@ def decode_skeleton(hm, raw_depth_m, intr, frame_id=0, thr=0.15):
             x, y, c = pk[0]
             u, v = from_crop(np.array([(x + .5) * IMG / HM - .5, (y + .5) * IMG / HM - .5]), h, w)
             z = _depth_at(raw_depth_m, u, v)
-            if z:
+            if z and NEAR <= z <= FAR:                  # same validity rule as the C++ estimator
                 rec.update(xyz=[float((u - intr.cx) * z / intr.fx), float((v - intr.cy) * z / intr.fy), z], conf=c)
         joints.append(rec)
     for j, p in enumerate(PARENT):                      # kinematic plausibility check
@@ -58,5 +58,7 @@ def decode_skeleton(hm, raw_depth_m, intr, frame_id=0, thr=0.15):
 def to_json(sk):
     return json.dumps(sk)
 
-# TODO: temporal smoothing (One-Euro filter, https://gery.casiez.net/1euro/) on xyz per joint.
-# TODO: multi-person -> use nms_peaks(topk>1) + bottom-up grouping (Part Affinity Fields, OpenPose).
+# Temporal smoothing: see smoothing.py (One-Euro filter; enabled in pipeline.py with --smooth).
+# Scope note: the shipped model is single-person. nms_peaks(topk>1) returns several candidates per joint, but
+# grouping them into people needs a bottom-up model trained with Part Affinity Fields (Cao et al., OpenPose),
+# which this repository does not train.

@@ -9,6 +9,7 @@ import numpy as np
 from preprocess import preprocess_depth
 from postprocess import decode_skeleton
 from trt_runner import TRTRunner
+from smoothing import SkeletonSmoother
 
 
 class LatestQueue:
@@ -46,8 +47,9 @@ class Profiler:
 
 
 class PosePipeline:
-    def __init__(self, source, engine, on_skeleton=None):
+    def __init__(self, source, engine, on_skeleton=None, smooth=False):
         self.src, self.engine, self.cb = source, engine, on_skeleton or (lambda s: None)
+        self.smoother = SkeletonSmoother() if smooth else None
         self.q1, self.q2, self.q3 = LatestQueue(), LatestQueue(), LatestQueue()
         self.run, self.prof, self.threads, self.done = True, Profiler(), [], 0
 
@@ -96,6 +98,8 @@ class PosePipeline:
                 continue
             t = time.perf_counter()
             sk = decode_skeleton(hm, d, self.src.intr, i)
+            if self.smoother:
+                sk = self.smoother(sk, t0)      # t0 = capture timestamp
             self.prof.rec("postprocess", (time.perf_counter() - t) * 1e3)
             self.prof.rec("end_to_end", (time.perf_counter() - t0) * 1e3)
             self.done += 1
@@ -118,11 +122,12 @@ if __name__ == "__main__":
     ap.add_argument("--source", choices=["synth", "v2", "azure"], default="synth")
     ap.add_argument("--engine", required=True)
     ap.add_argument("--seconds", type=int, default=20)
+    ap.add_argument("--smooth", action="store_true", help="One-Euro temporal smoothing of 3D joints")
     a = ap.parse_args()
     import sources
     src = {"synth": sources.SyntheticSource, "v2": sources.FreenectV2Source,
            "azure": sources.AzureKinectSource}[a.source]()
-    p = PosePipeline(src, a.engine)
+    p = PosePipeline(src, a.engine, smooth=a.smooth)
     p.start()
     t0 = time.time()
     while time.time() - t0 < a.seconds:

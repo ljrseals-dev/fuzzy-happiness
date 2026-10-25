@@ -1,10 +1,11 @@
-torch>=2.1        # CUDA 12.x build
-numpy
-opencv-python
-scipy
-onnx
-onnxruntime-gpu
-tensorrt==8.6.1   # Jetson: use the JetPack-provided TensorRT
-pycuda
-pylibfreenect2    # Kinect v2; build libfreenect2 from source with CUDA first
-pyk4a             # Azure Kinect; needs the Azure Kinect Sensor SDK
+torch>=2.1
+numpy>=1.24
+opencv-python>=4.8
+scipy>=1.10
+onnx>=1.14
+onnxruntime>=1.16
+# Optional / hardware-dependent (install on target machine):
+# tensorrt==8.6.1          # or JetPack-provided package
+# pycuda
+# pylibfreenect2           # Kinect v2; build libfreenect2 with CUDA first
+# pyk4a                    # Azure Kinect Sensor SDK required
