@@ -39,6 +39,10 @@ tests/              test_core.py (numpy-only tests run anywhere; torch tests aut
 INTEGRATION.md      How to embed the estimator into Hush
 ```
 
+## Environment baseline
+
+See [`docs/ENV_BASELINE.md`](docs/ENV_BASELINE.md) for the last recorded machine profile (`scripts/capture_env.py`). Replace it after the first successful GPU run. Hardware handoff status: [`docs/HARDWARE_HANDOFF.md`](docs/HARDWARE_HANDOFF.md).
+
 ## Quick start (CPU smoke tests – no GPU required)
 
 ```bash
